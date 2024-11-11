@@ -110,6 +110,7 @@ export default async function TippingPage({ params }: { params: { username: stri
                     <TipButton 
                       creatorId={pageData.id} 
                       creatorName={pageData.display_name}
+                      lightningAddress={pageData.lightning_address}
                     />
                     <p className="text-sm text-center text-muted-foreground">
                       Minimum tip: {pageData.minimum_tip.toLocaleString()} sats

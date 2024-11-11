@@ -23,17 +23,19 @@ export function Header() {
 
   return (
     <header className={cn(
-      "fixed top-0 w-full z-50 transition-all duration-300",
-      isScrolled ? "bg-background/80 backdrop-blur-md border-b shadow-sm" : "bg-transparent"
+      "fixed top-0 w-full z-50 transition-all duration-300 backdrop-blur-sm border-b border-white/10",
+      isScrolled 
+        ? "bg-background/70 shadow-lg" 
+        : "bg-transparent"
     )}>
       <div className="container mx-auto px-4">
         <div className="h-16 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="bg-primary text-primary-foreground w-8 h-8 rounded-lg flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200">
+            <div className="bg-gradient-to-r from-orange-500 to-pink-500 text-white w-8 h-8 rounded-lg flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200">
               <Zap className="w-5 h-5" />
             </div>
-            <span className="font-bold text-xl hidden sm:block">
+            <span className="font-bold text-xl hidden sm:block bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">
               TipBTC
             </span>
           </Link>
@@ -43,7 +45,7 @@ export function Header() {
             {isSignedIn ? (
               <>
                 <Link href="/dashboard">
-                  <Button variant="ghost" className="hover:bg-primary/5">Dashboard</Button>
+                  <Button variant="ghost" className="hover:bg-white/10">Dashboard</Button>
                 </Link>
                 <UserButton 
                   afterSignOutUrl="/"
@@ -56,7 +58,7 @@ export function Header() {
               </>
             ) : (
               <SignInButton mode="modal">
-                <Button className="shadow-md hover:shadow-lg transition-shadow">
+                <Button className="bg-gradient-to-r from-orange-500 to-pink-500 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                   <Zap className="w-4 h-4 mr-2" />
                   Get Started
                 </Button>
@@ -66,7 +68,7 @@ export function Header() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 hover:bg-primary/5 rounded-lg transition-colors"
+            className="md:hidden p-2 hover:bg-white/10 rounded-lg transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? (
@@ -79,7 +81,7 @@ export function Header() {
 
         {/* Mobile Navigation */}
         <div className={cn(
-          "md:hidden fixed inset-x-0 bg-background/80 backdrop-blur-md border-b transition-all duration-300 ease-in-out",
+          "md:hidden fixed inset-x-0 bg-background/80 backdrop-blur-md border-b border-white/10 transition-all duration-300 ease-in-out",
           isMobileMenuOpen 
             ? "translate-y-0 opacity-100" 
             : "-translate-y-full opacity-0"
@@ -89,7 +91,7 @@ export function Header() {
               <>
                 <Link 
                   href="/dashboard" 
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors p-2 hover:bg-primary/5 rounded-lg"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors p-2 hover:bg-white/10 rounded-lg"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Dashboard
@@ -107,7 +109,7 @@ export function Header() {
               </>
             ) : (
               <SignInButton mode="modal">
-                <Button className="w-full shadow-md hover:shadow-lg transition-shadow">
+                <Button className="w-full bg-gradient-to-r from-orange-500 to-pink-500 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300">
                   <Zap className="w-4 h-4 mr-2" />
                   Get Started
                 </Button>

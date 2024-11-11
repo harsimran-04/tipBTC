@@ -1,40 +1,94 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Zap, ArrowRight, Globe, Shield, Sparkles } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/10">
+    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/10 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+      
+      {/* Animated Background Blobs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Top-left blob */}
+        <div className="absolute -top-24 -left-24 w-96 h-96 bg-gradient-to-br from-orange-500/20 to-pink-500/20 rounded-full blur-3xl animate-float" />
+        
+        {/* Top-right blob */}
+        <div className="absolute top-1/4 -right-24 w-96 h-96 bg-gradient-to-bl from-primary/20 to-secondary/20 rounded-full blur-3xl animate-float" 
+          style={{ animationDelay: '-2s' }} 
+        />
+        
+        {/* Center blob */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-orange-500/10 via-pink-500/10 to-primary/10 rounded-full blur-3xl animate-float" 
+          style={{ animationDelay: '-4s' }} 
+        />
+        
+        {/* Bottom-left blob */}
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-gradient-to-tr from-secondary/20 to-primary/20 rounded-full blur-3xl animate-float" 
+          style={{ animationDelay: '-6s' }} 
+        />
+        
+        {/* Bottom-right blob */}
+        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-gradient-to-tl from-pink-500/20 to-orange-500/20 rounded-full blur-3xl animate-float" 
+          style={{ animationDelay: '-8s' }} 
+        />
+
+        {/* Small floating orbs */}
+        <div className="absolute top-1/4 left-1/4 w-24 h-24 bg-orange-500/30 rounded-full blur-2xl animate-float" 
+          style={{ animationDelay: '-1s' }} 
+        />
+        <div className="absolute bottom-1/4 right-1/4 w-24 h-24 bg-pink-500/30 rounded-full blur-2xl animate-float" 
+          style={{ animationDelay: '-3s' }} 
+        />
+        <div className="absolute top-1/3 right-1/3 w-16 h-16 bg-primary/30 rounded-full blur-2xl animate-float" 
+          style={{ animationDelay: '-5s' }} 
+        />
+      </div>
+
+      {/* Content */}
+      <div className="absolute inset-0 bg-background/50 backdrop-blur-[2px]" />
+      
       {/* Hero Section */}
-      <main className="container mx-auto px-4 py-16">
-        <div className="text-center space-y-6 max-w-3xl mx-auto">
-          <div className="space-y-4">
-            <h1 className="text-5xl font-bold tracking-tight sm:text-7xl bg-gradient-to-r from-primary to-primary-foreground bg-clip-text text-transparent">
-              Bitcoin Tips Made Simple
+      <main className="container mx-auto px-4 py-16 relative">
+        <div className="text-center space-y-6 max-w-4xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border bg-background/50 backdrop-blur-sm mb-8">
+            <Sparkles className="w-4 h-4 text-orange-500" />
+            <span className="text-sm">Accept Bitcoin tips instantly</span>
+          </div>
+          
+          <div className="space-y-8">
+            <h1 className="text-5xl font-bold tracking-tight sm:text-7xl">
+              <span className="bg-gradient-to-r from-orange-500 via-primary to-pink-500 bg-clip-text text-transparent">
+                Bitcoin Tips
+              </span>
+              <br />
+              Made Simple
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Create your personalized tipping page in seconds and start accepting Bitcoin payments from your supporters worldwide.
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Create your personalized tipping page in seconds and start accepting Bitcoin payments from your supporters worldwide. No technical knowledge required.
             </p>
           </div>
           
-          <div className="flex gap-4 justify-center mt-12 flex-col sm:flex-row items-center">
+          <div className="flex gap-6 justify-center mt-12 flex-col sm:flex-row items-center">
             <Link href="/create-page">
-              <Button size="lg" variant="default" className="text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105">
-                Create Your Tipping Page →
+              <Button size="lg" className="text-lg px-8 py-6 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group">
+                Create Your Page
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
-            <Link href="/explore">
-              <Button size="lg" variant="outline" className="text-lg px-8 py-6 rounded-full">
-                Explore Creators
+            <Link href="#how-it-works">
+              <Button size="lg" variant="outline" className="text-lg px-8 py-6 rounded-full hover:bg-background/50 backdrop-blur-sm">
+                Learn More
               </Button>
             </Link>
           </div>
 
           {/* Stats Section */}
-          <div className="flex justify-center gap-8 mt-16 flex-wrap">
-            <StatCard number="10k+" label="Active Creators" />
-            <StatCard number="$1M+" label="Tips Processed" />
-            <StatCard number="100k+" label="Happy Supporters" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mt-20">
+            <StatCard icon={<Zap />} number="10k+" label="Active Creators" />
+            <StatCard icon={<Globe />} number="$1M+" label="Tips Processed" />
+            <StatCard icon={<Shield />} number="100k+" label="Happy Supporters" />
           </div>
         </div>
 
@@ -43,22 +97,26 @@ export default function Home() {
           <FeatureCard 
             title="Lightning-Fast Payments"
             description="Receive Bitcoin tips instantly with zero fees using the Lightning Network"
-            icon="⚡"
+            icon={<Zap className="w-6 h-6 text-orange-500" />}
           />
           <FeatureCard 
             title="Custom Integration"
             description="Embed your tipping widget anywhere - website, Twitter, or blog"
-            icon="🔌"
+            icon={<Globe className="w-6 h-6 text-orange-500" />}
           />
           <FeatureCard 
             title="Real-time Dashboard"
             description="Track your earnings and engage with supporters in real-time"
-            icon="📊"
+            icon={<Sparkles className="w-6 h-6 text-orange-500" />}
           />
         </div>
 
         {/* How It Works Section */}
-        <div className="mt-32 text-center">
+        <div id="how-it-works" className="mt-32 text-center scroll-mt-20">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border bg-background/50 backdrop-blur-sm mb-8">
+            <ArrowRight className="w-4 h-4 text-orange-500" />
+            <span className="text-sm">Simple Process</span>
+          </div>
           <h2 className="text-3xl font-bold mb-12">How It Works</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <StepCard 
@@ -78,16 +136,35 @@ export default function Home() {
             />
           </div>
         </div>
+
+        {/* CTA Section */}
+        <div className="mt-32 text-center">
+          <div className="max-w-3xl mx-auto p-8 rounded-2xl bg-gradient-to-r from-orange-500/10 to-pink-500/10 border backdrop-blur-sm">
+            <h2 className="text-3xl font-bold mb-4">Ready to Start Accepting Tips?</h2>
+            <p className="text-muted-foreground mb-8">
+              Join thousands of creators already using our platform
+            </p>
+            <Link href="/create-page">
+              <Button size="lg" className="text-lg px-8 py-6 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group">
+                Get Started Now
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
+          </div>
+        </div>
       </main>
     </div>
   );
 }
 
-function StatCard({ number, label }: { number: string; label: string }) {
+function StatCard({ icon, number, label }: { icon: React.ReactNode; number: string; label: string }) {
   return (
-    <div className="text-center">
+    <div className="flex flex-col items-center gap-2 p-6 rounded-xl bg-background/50 backdrop-blur-sm border hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      <div className="p-3 rounded-full bg-orange-500/10">
+        {icon}
+      </div>
       <div className="text-3xl font-bold text-primary">{number}</div>
-      <div className="text-sm text-muted-foreground mt-1">{label}</div>
+      <div className="text-sm text-muted-foreground">{label}</div>
     </div>
   );
 }
@@ -95,11 +172,11 @@ function StatCard({ number, label }: { number: string; label: string }) {
 function FeatureCard({ title, description, icon }: { 
   title: string; 
   description: string; 
-  icon: string;
+  icon: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border bg-card p-8 text-center hover:shadow-lg transition-all duration-200 hover:scale-105">
-      <div className="text-4xl mb-4 bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
+    <div className="rounded-xl border bg-background/50 backdrop-blur-sm p-8 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      <div className="mb-6 inline-flex p-4 rounded-full bg-orange-500/10">
         {icon}
       </div>
       <h2 className="text-xl font-semibold mb-2">{title}</h2>
@@ -114,12 +191,14 @@ function StepCard({ step, title, description }: {
   description: string;
 }) {
   return (
-    <div className="relative p-6">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
+    <div className="relative p-6 rounded-xl border bg-background/50 backdrop-blur-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
         {step}
       </div>
-      <h3 className="text-xl font-semibold mt-8 mb-2">{title}</h3>
-      <p className="text-muted-foreground">{description}</p>
+      <div className="mt-4">
+        <h3 className="text-xl font-semibold mb-2">{title}</h3>
+        <p className="text-muted-foreground">{description}</p>
+      </div>
     </div>
   );
 }

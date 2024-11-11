@@ -20,7 +20,8 @@ export default function CreatePage() {
     displayName: '',
     bio: '',
     profileImage: '',
-    minimumTip: '1000'
+    minimumTip: '1000',
+    lightningAddress: ''
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -68,7 +69,8 @@ export default function CreatePage() {
             bio: formData.bio || null,
             minimum_tip: parseInt(formData.minimumTip),
             profile_image: formData.profileImage || null,
-            user_id: user.id
+            user_id: user.id,
+            lightning_address: formData.lightningAddress
           }
         ])
         .select()
@@ -183,6 +185,24 @@ export default function CreatePage() {
                     Minimum recommended: 1000 sats
                   </p>
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium flex items-center gap-2">
+                  <Zap className="w-4 h-4" />
+                  Lightning Address
+                </label>
+                <Input 
+                  placeholder="you@zbd.gg"
+                  value={formData.lightningAddress}
+                  onChange={(e) => setFormData({...formData, lightningAddress: e.target.value})}
+                  required
+                  disabled={loading}
+                  className="transition-all duration-300 focus:ring-2 focus:ring-primary/20"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Your Lightning Address to receive tips (e.g., you@zbd.gg)
+                </p>
               </div>
 
               <Button 
