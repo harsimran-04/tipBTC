@@ -19,7 +19,10 @@ export function EditPageForm({ page }: EditPageFormProps) {
   const [formData, setFormData] = useState({
     displayName: page.display_name,
     bio: page.bio || '',
-    minimumTip: page.minimum_tip.toString()
+    minimumTip: page.minimum_tip.toString(),
+    twitterHandle: page.twitter_handle || '',
+    instagramHandle: page.instagram_handle || '',
+    websiteUrl: page.website_url || ''
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,6 +41,9 @@ export function EditPageForm({ page }: EditPageFormProps) {
             display_name: formData.displayName,
             bio: formData.bio || null,
             minimum_tip: parseInt(formData.minimumTip),
+            twitter_handle: formData.twitterHandle || null,
+            instagram_handle: formData.instagramHandle || null,
+            website_url: formData.websiteUrl || null
           },
         }),
       });
@@ -107,6 +113,33 @@ export function EditPageForm({ page }: EditPageFormProps) {
               value={formData.minimumTip}
               onChange={(e) => setFormData({...formData, minimumTip: e.target.value})}
               min="1000"
+              disabled={loading}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Twitter Handle</label>
+            <Input 
+              value={formData.twitterHandle}
+              onChange={(e) => setFormData({...formData, twitterHandle: e.target.value})}
+              disabled={loading}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Instagram Handle</label>
+            <Input 
+              value={formData.instagramHandle}
+              onChange={(e) => setFormData({...formData, instagramHandle: e.target.value})}
+              disabled={loading}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Website URL</label>
+            <Input 
+              value={formData.websiteUrl}
+              onChange={(e) => setFormData({...formData, websiteUrl: e.target.value})}
               disabled={loading}
             />
           </div>

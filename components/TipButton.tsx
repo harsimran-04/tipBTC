@@ -24,6 +24,7 @@ interface TipButtonProps {
 
 export function TipButton({ creatorId, creatorName, lightningAddress }: TipButtonProps) {
   const [amount, setAmount] = useState('')
+  const [supporterName, setSupporterName] = useState('')
   const [loading, setLoading] = useState(false)
   const [selectedPreset, setSelectedPreset] = useState<number | null>(null)
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'pending' | 'completed' | 'error'>('idle')
@@ -31,6 +32,11 @@ export function TipButton({ creatorId, creatorName, lightningAddress }: TipButto
   const [qrValue, setQrValue] = useState<string | null>(null)
 
   const handleTip = async () => {
+    if (!supporterName.trim()) {
+      toast.error('Please enter your name');
+      return;
+    }
+
     setLoading(true)
     try {
       const response = await fetch('/api/payments/create', {
@@ -42,6 +48,7 @@ export function TipButton({ creatorId, creatorName, lightningAddress }: TipButto
           pageId: creatorId,
           amount: parseInt(amount),
           lightningAddress,
+          supporterName: supporterName.trim(),
         }),
       })
 
@@ -122,7 +129,7 @@ export function TipButton({ creatorId, creatorName, lightningAddress }: TipButto
             Support {creatorName}
           </DialogTitle>
           <DialogDescription>
-            Choose an amount and enter your Lightning address to send a tip.
+            Choose an amount and enter your details to send a tip.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-8 py-4">
@@ -170,15 +177,15 @@ export function TipButton({ creatorId, creatorName, lightningAddress }: TipButto
           ) : (
             <>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Your Lightning Address</label>
+                <label className="text-sm font-medium">Your Name</label>
                 <Input
-                  placeholder="you@wallet.com"
-                  value={lightningAddress}
-                  onChange={(e) => setLightningAddress(e.target.value)}
+                  placeholder="Enter your name"
+                  value={supporterName}
+                  onChange={(e) => setSupporterName(e.target.value)}
                   className="h-12"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Enter your Lightning address to receive the payment
+                  This will be displayed in the supporters list
                 </p>
               </div>
 

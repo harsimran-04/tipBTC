@@ -7,6 +7,120 @@ import { Pencil, Trash2, Plus, Zap, Users, Sparkles } from 'lucide-react';
 import type { TippingPage } from '@/types/database';
 import { DeletePageButton } from '@/components/DeletePageButton';
 
+async function getDashboardStats(userId: string) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: { persistSession: false }
+    }
+  );
+
+  // Get all completed tips for user's pages
+  const { data: tips } = await supabase
+    .from('tips')
+    .select(`
+      *,
+      tipping_pages!inner (
+        user_id
+      )
+    `)
+    .eq('tipping_pages.user_id', userId)
+    .eq('status', 'completed');
+
+  if (!tips) return { totalTips: 0, totalAmount: 0, totalSupporters: 0 };
+
+  const totalAmount = tips.reduce((sum, tip) => sum + tip.amount, 0);
+  const uniqueSupporters = new Set(tips.map(tip => tip.supporter_name)).size;
+
+  return {
+    totalTips: tips.length,
+    totalAmount,
+    totalSupporters: uniqueSupporters
+  };
+}
+
+// Add this new StatsOverview component
+function StatsOverview({ stats }: { 
+  stats: { 
+    totalTips: number; 
+    totalAmount: number; 
+    totalSupporters: number; 
+    activePages: number; 
+  } 
+}) {
+  return (
+    <div className="relative p-8 rounded-2xl bg-gradient-to-br from-orange-500/5 via-pink-500/5 to-primary/5 border backdrop-blur-sm mb-8 overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-0 w-32 h-32 bg-orange-500/10 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '-5s' }} />
+      </div>
+
+      {/* Grid pattern overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:16px_16px]" />
+      
+      <div className="relative grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Total Tips Card */}
+        <div className="bg-gradient-to-br from-background/40 to-background/20 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-orange-500/20 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+          <div className="flex items-center gap-4">
+            <div className="p-3 rounded-xl bg-gradient-to-br from-orange-500/20 to-orange-500/10">
+              <Zap className="w-6 h-6 text-orange-500" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground font-medium">Total Tips</p>
+              <div className="flex items-baseline gap-2">
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-orange-500 bg-clip-text text-transparent">
+                  {stats.totalTips.toLocaleString()}
+                </h3>
+                <span className="text-sm text-orange-500/80">
+                  {stats.totalAmount.toLocaleString()} sats
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Total Supporters Card */}
+        <div className="bg-gradient-to-br from-background/40 to-background/20 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-orange-500/20 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+          <div className="flex items-center gap-4">
+            <div className="p-3 rounded-xl bg-gradient-to-br from-orange-500/20 to-orange-500/10">
+              <Users className="w-6 h-6 text-orange-500" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground font-medium">Total Supporters</p>
+              <div className="flex items-baseline gap-2">
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-orange-500 bg-clip-text text-transparent">
+                  {stats.totalSupporters.toLocaleString()}
+                </h3>
+                <span className="text-sm text-orange-500/80">Unique supporters</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Active Pages Card */}
+        <div className="bg-gradient-to-br from-background/40 to-background/20 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-orange-500/20 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+          <div className="flex items-center gap-4">
+            <div className="p-3 rounded-xl bg-gradient-to-br from-orange-500/20 to-orange-500/10">
+              <Sparkles className="w-6 h-6 text-orange-500" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground font-medium">Active Pages</p>
+              <div className="flex items-baseline gap-2">
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-orange-500 bg-clip-text text-transparent">
+                  {stats.activePages.toLocaleString()}
+                </h3>
+                <span className="text-sm text-orange-500/80">Total pages</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default async function DashboardPage() {
   const user = await currentUser();
   
@@ -41,6 +155,8 @@ export default async function DashboardPage() {
     console.error('Error fetching pages:', error);
   }
 
+  const stats = await getDashboardStats(user.id);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-secondary/5 relative overflow-hidden">
       {/* Background Pattern */}
@@ -71,30 +187,15 @@ export default async function DashboardPage() {
           </Link>
         </div>
 
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <StatCard
-            icon={<Zap className="w-5 h-5" />}
-            title="Total Tips"
-            value="123,456"
-            trend="+12.5%"
-            trendUp={true}
-          />
-          <StatCard
-            icon={<Users className="w-5 h-5" />}
-            title="Total Supporters"
-            value="1,234"
-            trend="+5.2%"
-            trendUp={true}
-          />
-          <StatCard
-            icon={<Sparkles className="w-5 h-5" />}
-            title="Active Pages"
-            value={pages?.length.toString() || "0"}
-            trend="All time"
-            trendUp={true}
-          />
-        </div>
+        {/* Replace the old stats grid with the new StatsOverview component */}
+        <StatsOverview 
+          stats={{
+            totalTips: stats.totalTips,
+            totalAmount: stats.totalAmount,
+            totalSupporters: stats.totalSupporters,
+            activePages: pages?.length || 0
+          }}
+        />
 
         {/* Tipping Pages Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -157,32 +258,5 @@ export default async function DashboardPage() {
         </div>
       </div>
     </div>
-  );
-}
-
-function StatCard({ icon, title, value, trend, trendUp }: {
-  icon: React.ReactNode;
-  title: string;
-  value: string;
-  trend: string;
-  trendUp: boolean;
-}) {
-  return (
-    <Card className="bg-background/50 backdrop-blur-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-      <CardContent className="pt-6">
-        <div className="flex items-center justify-between mb-2">
-          <div className="p-2 bg-primary/10 rounded-lg">
-            {icon}
-          </div>
-          <span className={`text-sm ${trendUp ? 'text-green-500' : 'text-red-500'}`}>
-            {trend}
-          </span>
-        </div>
-        <div className="space-y-1">
-          <h3 className="text-2xl font-bold">{value}</h3>
-          <p className="text-sm text-muted-foreground">{title}</p>
-        </div>
-      </CardContent>
-    </Card>
   );
 } 

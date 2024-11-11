@@ -9,7 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
-import { Zap, User, FileText, Coins } from 'lucide-react';
+import { Zap, User, FileText, Coins, Link as LinkIcon, Twitter, Instagram, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 
 export default function CreatePage() {
   const router = useRouter();
@@ -21,7 +22,10 @@ export default function CreatePage() {
     bio: '',
     profileImage: '',
     minimumTip: '1000',
-    lightningAddress: ''
+    lightningAddress: '',
+    twitterHandle: '',
+    instagramHandle: '',
+    websiteUrl: ''
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -70,7 +74,10 @@ export default function CreatePage() {
             minimum_tip: parseInt(formData.minimumTip),
             profile_image: formData.profileImage || null,
             user_id: user.id,
-            lightning_address: formData.lightningAddress
+            lightning_address: formData.lightningAddress,
+            twitter_handle: formData.twitterHandle || null,
+            instagram_handle: formData.instagramHandle || null,
+            website_url: formData.websiteUrl || null
           }
         ])
         .select()
@@ -102,6 +109,16 @@ export default function CreatePage() {
       </div>
 
       <div className="container max-w-2xl mx-auto py-16 px-4 relative">
+        <Link 
+          href="/dashboard" 
+          className="absolute top-8 left-4 md:left-0 inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <Button variant="ghost" size="sm" className="gap-2">
+            <ArrowLeft className="w-4 h-4" />
+            Back to Dashboard
+          </Button>
+        </Link>
+
         <Card className="border-2 shadow-xl bg-card/50 backdrop-blur-sm">
           <CardHeader className="text-center space-y-2">
             <CardTitle className="text-3xl font-bold gradient-text">Create Your Tipping Page</CardTitle>
@@ -203,6 +220,50 @@ export default function CreatePage() {
                 <p className="text-xs text-muted-foreground">
                   Your Lightning Address to receive tips (e.g., you@zbd.gg)
                 </p>
+              </div>
+
+              {/* Social Media Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Social Media (Optional)</h3>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium flex items-center gap-2">
+                    <Twitter className="w-4 h-4" />
+                    Twitter Handle
+                  </label>
+                  <Input 
+                    placeholder="@username"
+                    value={formData.twitterHandle}
+                    onChange={(e) => setFormData({...formData, twitterHandle: e.target.value})}
+                    className="transition-all duration-300 focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium flex items-center gap-2">
+                    <Instagram className="w-4 h-4" />
+                    Instagram Handle
+                  </label>
+                  <Input 
+                    placeholder="@username"
+                    value={formData.instagramHandle}
+                    onChange={(e) => setFormData({...formData, instagramHandle: e.target.value})}
+                    className="transition-all duration-300 focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium flex items-center gap-2">
+                    <LinkIcon className="w-4 h-4" />
+                    Website URL
+                  </label>
+                  <Input 
+                    placeholder="https://your-website.com"
+                    value={formData.websiteUrl}
+                    onChange={(e) => setFormData({...formData, websiteUrl: e.target.value})}
+                    className="transition-all duration-300 focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
               </div>
 
               <Button 

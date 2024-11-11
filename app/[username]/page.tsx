@@ -7,6 +7,59 @@ import Image from 'next/image';
 import { SocialButtons } from '@/components/SocialButtons';
 import { Badge } from '@/components/ui/badge';
 import { Sparkles, Zap, Trophy } from 'lucide-react';
+import { clerkClient } from '@clerk/nextjs';
+import { formatDistanceToNow } from 'date-fns';
+
+async function getPageStats(pageId: string) {
+  const supabase = createServerComponentClient({ cookies });
+  
+  const { data: tips } = await supabase
+    .from('tips')
+    .select('*')
+    .eq('page_id', pageId)
+    .eq('status', 'completed');
+
+  if (!tips) return { totalTips: 0, totalAmount: 0, supporters: [], topSupporter: null };
+
+  const totalAmount = tips.reduce((sum, tip) => sum + tip.amount, 0);
+  const supporters = [...new Set(tips.map(tip => tip.supporter_name))];
+  
+  // Find top supporter
+  const supporterTotals = tips.reduce((acc, tip) => {
+    acc[tip.supporter_name] = (acc[tip.supporter_name] || 0) + tip.amount;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const topSupporter = Object.entries(supporterTotals)
+    .sort(([,a], [,b]) => b - a)[0];
+
+  return {
+    totalTips: tips.length,
+    totalAmount,
+    supporters: supporters.length,
+    topSupporter: topSupporter ? {
+      name: topSupporter[0],
+      amount: topSupporter[1]
+    } : null,
+    recentTips: tips
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .slice(0, 3)
+  };
+}
+
+async function getRecentTips(pageId: string) {
+  const supabase = createServerComponentClient({ cookies });
+  
+  const { data: tips } = await supabase
+    .from('tips')
+    .select('*')
+    .eq('page_id', pageId)
+    .eq('status', 'completed')
+    .order('created_at', { ascending: false })
+    .limit(5); // Get last 5 tips
+
+  return tips || [];
+}
 
 export default async function TippingPage({ params }: { params: { username: string } }) {
   const supabase = createServerComponentClient({ cookies });
@@ -20,6 +73,14 @@ export default async function TippingPage({ params }: { params: { username: stri
   if (!pageData) {
     notFound();
   }
+
+  // Fetch user profile from Clerk
+  const user = await clerkClient.users.getUser(pageData.user_id);
+  const profileImageUrl = user.imageUrl || null;
+
+  const stats = await getPageStats(pageData.id);
+
+  const recentTips = await getRecentTips(pageData.id);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-secondary/5 relative overflow-hidden">
@@ -39,10 +100,10 @@ export default async function TippingPage({ params }: { params: { username: stri
             {/* Profile Header with enhanced animations */}
             <div className="text-center space-y-6 animate-fade-in">
               <div className="relative w-40 h-40 mx-auto group">
-                {pageData.profile_image ? (
+                {profileImageUrl ? (
                   <div className="relative w-full h-full rounded-full overflow-hidden animate-glow">
                     <Image
-                      src={pageData.profile_image}
+                      src={profileImageUrl}
                       alt={pageData.display_name}
                       fill
                       className="object-cover transition-transform duration-300 group-hover:scale-110"
@@ -53,12 +114,6 @@ export default async function TippingPage({ params }: { params: { username: stri
                     {pageData.display_name[0]}
                   </div>
                 )}
-                <div className="absolute -bottom-2 right-2 transform transition-transform duration-300 group-hover:scale-110">
-                  <Badge variant="default" className="gap-1 px-3 py-1.5 text-sm shadow-lg glass-effect">
-                    <Sparkles className="w-4 h-4" />
-                    Top Creator
-                  </Badge>
-                </div>
               </div>
 
               <div className="space-y-4">
@@ -78,27 +133,37 @@ export default async function TippingPage({ params }: { params: { username: stri
               <StatsCard
                 icon={<Zap className="w-5 h-5" />}
                 title="Total Tips"
-                value="1,234"
-                trend="+12% this week"
+                value={`${stats.totalTips.toLocaleString()}`}
+                trend={`${stats.totalAmount.toLocaleString()} sats`}
                 trendUp={true}
-                delay={0}
               />
               <StatsCard
                 icon={<Trophy className="w-5 h-5" />}
                 title="Top Supporter"
-                value="Satoshi"
-                trend="50,000 sats"
+                value={stats.topSupporter?.name || "No tips yet"}
+                trend={stats.topSupporter ? `${stats.topSupporter.amount.toLocaleString()} sats` : "-"}
                 trendUp={true}
-                delay={200}
               />
               <StatsCard
                 icon={<Sparkles className="w-5 h-5" />}
-                title="Streak"
-                value="12 days"
-                trend="Personal best!"
+                title="Total Supporters"
+                value={stats.supporters.toString()}
+                trend="All time"
                 trendUp={true}
-                delay={400}
               />
+            </div>
+
+            {/* Recent Tips */}
+            <div className="space-y-3">
+              {stats.recentTips.map((tip) => (
+                <RecentTip
+                  key={tip.id}
+                  name={tip.supporter_name}
+                  amount={tip.amount}
+                  timeAgo={formatDistanceToNow(new Date(tip.created_at), { addSuffix: true })}
+                  highlight={tip.supporter_name === stats.topSupporter?.name}
+                />
+              ))}
             </div>
 
             {/* Main Tipping Card with glass effect */}
@@ -124,9 +189,21 @@ export default async function TippingPage({ params }: { params: { username: stri
                       Recent Supporters
                     </h3>
                     <div className="space-y-3">
-                      <RecentTip name="Satoshi" amount={50000} timeAgo="2 minutes ago" highlight />
-                      <RecentTip name="Alice" amount={10000} timeAgo="1 hour ago" />
-                      <RecentTip name="Bob" amount={2000} timeAgo="3 hours ago" />
+                      {recentTips.length > 0 ? (
+                        recentTips.map((tip) => (
+                          <RecentTip
+                            key={tip.id}
+                            name={tip.supporter_name}
+                            amount={tip.amount}
+                            timeAgo={formatDistanceToNow(new Date(tip.created_at), { addSuffix: true })}
+                            highlight={tip.supporter_name === stats.topSupporter?.name}
+                          />
+                        ))
+                      ) : (
+                        <div className="text-center py-6 text-muted-foreground">
+                          <p>No tips yet. Be the first to support!</p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -135,7 +212,11 @@ export default async function TippingPage({ params }: { params: { username: stri
 
             {/* Social Links with enhanced animations */}
             <div className="animate-fade-in" style={{ animationDelay: '600ms' }}>
-              <SocialButtons username={pageData.username} />
+              <SocialButtons 
+                twitterHandle={pageData.twitter_handle}
+                instagramHandle={pageData.instagram_handle}
+                websiteUrl={pageData.website_url}
+              />
             </div>
           </div>
         </div>
