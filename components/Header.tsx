@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { UserButton, SignInButton, useUser } from '@clerk/nextjs';
 import { Button } from './ui/button';
-import { Zap, Menu, X } from 'lucide-react';
+import { Zap, Menu, X, Heart, Rocket } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -42,6 +42,18 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-4">
+            <Link href="/causes">
+              <Button variant="ghost" className="hover:bg-white/10">
+                <Heart className="w-4 h-4 mr-2" />
+                Causes
+              </Button>
+            </Link>
+            <Link href="/crowdfunding">
+              <Button variant="ghost" className="hover:bg-white/10">
+                <Rocket className="w-4 h-4 mr-2" />
+                Crowdfunding
+              </Button>
+            </Link>
             {isSignedIn ? (
               <>
                 <Link href="/dashboard">
@@ -87,6 +99,18 @@ export function Header() {
             : "-translate-y-full opacity-0"
         )}>
           <nav className="container mx-auto px-4 py-4 flex flex-col gap-4">
+            <Link href="/causes">
+              <Button className="w-full justify-start">
+                <Heart className="w-4 h-4 mr-2" />
+                Causes
+              </Button>
+            </Link>
+            <Link href="/crowdfunding">
+              <Button className="w-full justify-start">
+                <Rocket className="w-4 h-4 mr-2" />
+                Crowdfunding
+              </Button>
+            </Link>
             {isSignedIn ? (
               <>
                 <Link 

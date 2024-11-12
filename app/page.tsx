@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Zap, ArrowRight, Globe, Shield, Sparkles } from "lucide-react";
+import { Zap, ArrowRight, Globe, Shield, Sparkles, Heart, Rocket } from "lucide-react";
 
 export default function Home() {
   return (
@@ -53,8 +53,8 @@ export default function Home() {
       <main className="container mx-auto px-4 py-16 relative">
         <div className="text-center space-y-6 max-w-4xl mx-auto">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border bg-background/50 backdrop-blur-sm mb-8">
-            <Sparkles className="w-4 h-4 text-orange-500" />
-            <span className="text-sm">Accept Bitcoin tips instantly</span>
+            <Heart className="w-4 h-4 text-orange-500" />
+            <span className="text-sm">Support creators and important causes</span>
           </div>
           
           <div className="space-y-8">
@@ -66,7 +66,7 @@ export default function Home() {
               Made Simple
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Create your personalized tipping page in seconds and start accepting Bitcoin payments from your supporters worldwide. No technical knowledge required.
+              Create your personalized tipping page or support verified causes with Bitcoin Lightning payments. Making a difference has never been easier.
             </p>
           </div>
           
@@ -77,9 +77,10 @@ export default function Home() {
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
-            <Link href="#how-it-works">
+            <Link href="/causes">
               <Button size="lg" variant="outline" className="text-lg px-8 py-6 rounded-full hover:bg-background/50 backdrop-blur-sm">
-                Learn More
+                <Heart className="w-5 h-5 mr-2" />
+                Support Causes
               </Button>
             </Link>
           </div>
@@ -100,14 +101,14 @@ export default function Home() {
             icon={<Zap className="w-6 h-6 text-orange-500" />}
           />
           <FeatureCard 
-            title="Custom Integration"
-            description="Embed your tipping widget anywhere - website, Twitter, or blog"
-            icon={<Globe className="w-6 h-6 text-orange-500" />}
+            title="Support Causes"
+            description="Contribute to verified causes and make a real impact with your Bitcoin"
+            icon={<Heart className="w-6 h-6 text-orange-500" />}
           />
           <FeatureCard 
-            title="Real-time Dashboard"
-            description="Track your earnings and engage with supporters in real-time"
-            icon={<Sparkles className="w-6 h-6 text-orange-500" />}
+            title="Fund Projects"
+            description="Support innovative projects and startups through crowdfunding"
+            icon={<Rocket className="w-6 h-6 text-orange-500" />}
           />
         </div>
 
@@ -121,18 +122,18 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <StepCard 
               step="1"
-              title="Create Your Page"
-              description="Sign up and customize your tipping page in minutes"
+              title="Choose Your Path"
+              description="Create a tipping page or browse verified causes to support"
             />
             <StepCard 
               step="2"
-              title="Share Your Link"
-              description="Share your unique tipping link with your audience"
+              title="Make an Impact"
+              description="Send Bitcoin tips instantly using Lightning Network"
             />
             <StepCard 
               step="3"
-              title="Receive Tips"
-              description="Get Bitcoin tips directly to your wallet instantly"
+              title="Track Progress"
+              description="See your contributions and the impact they make"
             />
           </div>
         </div>
@@ -140,16 +141,24 @@ export default function Home() {
         {/* CTA Section */}
         <div className="mt-32 text-center">
           <div className="max-w-3xl mx-auto p-8 rounded-2xl bg-gradient-to-r from-orange-500/10 to-pink-500/10 border backdrop-blur-sm">
-            <h2 className="text-3xl font-bold mb-4">Ready to Start Accepting Tips?</h2>
+            <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
             <p className="text-muted-foreground mb-8">
-              Join thousands of creators already using our platform
+              Create your page, support causes, or fund innovative projects with Bitcoin
             </p>
-            <Link href="/create-page">
-              <Button size="lg" className="text-lg px-8 py-6 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group">
-                Get Started Now
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
+            <div className="flex gap-4 justify-center flex-col sm:flex-row">
+              <Link href="/create-page">
+                <Button size="lg" className="text-lg px-8 py-6 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group">
+                  Create Your Page
+                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+              <Link href="/crowdfunding">
+                <Button size="lg" variant="outline" className="text-lg px-8 py-6 rounded-full hover:bg-background/50 backdrop-blur-sm">
+                  <Rocket className="w-5 h-5 mr-2" />
+                  Browse Projects
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </main>
