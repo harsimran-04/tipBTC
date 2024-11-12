@@ -7,4 +7,17 @@ export interface TippingPage {
   profile_image: string | null;
   user_id: string;
   created_at: string;
+}
+
+export interface Cause {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  target_amount: number;
+  current_amount: number;
+  lightning_address: string;
+  image_url?: string;
+  created_at: string;
+  status: string;
 } 

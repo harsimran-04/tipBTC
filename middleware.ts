@@ -9,7 +9,8 @@ export default authMiddleware({
     "/",
     "/:username",
     "/api/pages/delete",
-    "/api/pages/update"
+    "/api/pages/update",
+    "/causes"
   ],
   // Routes that can always be accessed, and have
   // no authentication information
