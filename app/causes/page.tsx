@@ -57,11 +57,11 @@ export default async function CausesPage() {
             <Card key={cause.id} className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               {cause.image_url && (
                 <div className="relative h-48 w-full">
-                  <Image
+                  <img
                     src={cause.image_url}
                     alt={cause.title}
-                    fill
-                    className="object-cover"
+                
+                    className="object-fit w-auto"
                   />
                 </div>
               )}

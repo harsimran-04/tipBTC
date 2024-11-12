@@ -105,9 +105,13 @@ export default function Home() {
             <div className="absolute -top-8 -left-8 w-48 h-48 bg-orange-500/20 rounded-full blur-3xl animate-float" />
             <div className="absolute -bottom-8 -right-8 w-48 h-48 bg-pink-500/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '-5s' }} />
           </div>
+          <div>
+          <h2 className="text-3xl font-bold mt-12">Join now to do</h2>
+          </div>
 
           {/* Features Section */}
           <div className="mt-32 grid grid-cols-1 gap-8 sm:grid-cols-3">
+            
             <FeatureCard 
               title="Lightning-Fast Payments"
               description="Receive Bitcoin tips instantly with zero fees using the Lightning Network"
