@@ -10,7 +10,28 @@ import { Sparkles, Zap, Trophy } from 'lucide-react';
 import { clerkClient } from '@clerk/nextjs';
 import { formatDistanceToNow } from 'date-fns';
 
-async function getPageStats(pageId: string) {
+// Add type definitions at the top
+interface Tip {
+  id: string;
+  amount: number;
+  supporter_name: string;
+  created_at: string;
+  status: string;
+  page_id: string;
+}
+
+interface PageStats {
+  totalTips: number;
+  totalAmount: number;
+  supporters: number;
+  topSupporter: {
+    name: string;
+    amount: number;
+  } | null;
+  recentTips: Tip[];
+}
+
+async function getPageStats(pageId: string): Promise<PageStats> {
   const supabase = createServerComponentClient({ cookies });
   
   const { data: tips } = await supabase
@@ -19,13 +40,13 @@ async function getPageStats(pageId: string) {
     .eq('page_id', pageId)
     .eq('status', 'completed');
 
-  if (!tips) return { totalTips: 0, totalAmount: 0, supporters: [], topSupporter: null };
+  if (!tips) return { totalTips: 0, totalAmount: 0, supporters: 0, topSupporter: null, recentTips: [] };
 
-  const totalAmount = tips.reduce((sum, tip) => sum + tip.amount, 0);
-  const supporters = [...new Set(tips.map(tip => tip.supporter_name))];
+  const totalAmount = tips.reduce((sum: number, tip: Tip) => sum + tip.amount, 0);
+  const supporters = Array.from(new Set(tips.map((tip: Tip) => tip.supporter_name)));
   
   // Find top supporter
-  const supporterTotals = tips.reduce((acc, tip) => {
+  const supporterTotals = tips.reduce((acc: Record<string, number>, tip: Tip) => {
     acc[tip.supporter_name] = (acc[tip.supporter_name] || 0) + tip.amount;
     return acc;
   }, {} as Record<string, number>);
@@ -42,12 +63,12 @@ async function getPageStats(pageId: string) {
       amount: topSupporter[1]
     } : null,
     recentTips: tips
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .sort((a: Tip, b: Tip) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
       .slice(0, 3)
   };
 }
 
-async function getRecentTips(pageId: string) {
+async function getRecentTips(pageId: string): Promise<Tip[]> {
   const supabase = createServerComponentClient({ cookies });
   
   const { data: tips } = await supabase
@@ -102,10 +123,10 @@ export default async function TippingPage({ params }: { params: { username: stri
               <div className="relative w-40 h-40 mx-auto group">
                 {profileImageUrl ? (
                   <div className="relative w-full h-full rounded-full overflow-hidden animate-glow">
-                    <Image
+                    <img
                       src={profileImageUrl}
                       alt={pageData.display_name}
-                      fill
+                      layout="fill"
                       className="object-cover transition-transform duration-300 group-hover:scale-110"
                     />
                   </div>

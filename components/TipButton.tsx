@@ -30,6 +30,7 @@ export function TipButton({ creatorId, creatorName, lightningAddress }: TipButto
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'pending' | 'completed' | 'error'>('idle')
   const [invoice, setInvoice] = useState<string | null>(null)
   const [qrValue, setQrValue] = useState<string | null>(null)
+  const [open, setOpen] = useState(false)
 
   const handleTip = async () => {
     if (!supporterName.trim()) {
@@ -63,33 +64,28 @@ export function TipButton({ creatorId, creatorName, lightningAddress }: TipButto
       setInvoice(data.data.invoice.request)
       setPaymentStatus('pending')
 
-      let checkInterval = setInterval(async () => {
+      const pollInterval = setInterval(async () => {
         try {
-          const statusResponse = await fetch(`/api/payments/status/${data.id}`)
+          const statusResponse = await fetch(`/api/payments/status/${data.data.id}`)
           const statusData = await statusResponse.json()
+          console.log('Status check response:', statusData)
 
           if (statusData.status === 'completed') {
-            clearInterval(checkInterval);
-            setPaymentStatus('completed');
-            toast.success('Payment successful!');
-          } else if (statusData.status === 'expired') {
-            clearInterval(checkInterval);
-            setPaymentStatus('error');
-            toast.error('Payment expired');
+            clearInterval(pollInterval)
+            setPaymentStatus('completed')
+            toast.success('Payment successful!')
+            window.location.reload()
           }
         } catch (error) {
           console.error('Status check error:', error)
-          clearInterval(checkInterval)
-          setPaymentStatus('error')
-          toast.error('Failed to check payment status')
         }
-      }, 3000)
+      }, 2000)
 
       setTimeout(() => {
-        clearInterval(checkInterval);
+        clearInterval(pollInterval)
         if (paymentStatus === 'pending') {
-          setPaymentStatus('error');
-          toast.error('Payment timed out');
+          setPaymentStatus('error')
+          toast.error('Payment timed out')
         }
       }, 300000)
 
@@ -114,8 +110,15 @@ export function TipButton({ creatorId, creatorName, lightningAddress }: TipButto
     setAmount(value.toString())
   }
 
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen)
+    if (!isOpen && (paymentStatus === 'pending' || paymentStatus === 'completed')) {
+      window.location.reload()
+    }
+  }
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button className="w-full h-14 text-lg gap-2 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 shadow-lg hover:shadow-xl transition-all duration-300 group">
           <Zap className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
@@ -169,9 +172,10 @@ export function TipButton({ creatorId, creatorName, lightningAddress }: TipButto
                 </Button>
               </div>
 
-              <div className="text-center text-sm text-muted-foreground">
-                Waiting for payment...
-                <div className="mt-2 animate-spin rounded-full h-6 w-6 border-2 border-primary border-r-transparent mx-auto" />
+              <div className="text-center text-sm">
+                
+                 
+               
               </div>
             </div>
           ) : (

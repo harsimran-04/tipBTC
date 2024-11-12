@@ -34,7 +34,8 @@ export async function POST(request: Request) {
       page_id: pageId,
       amount,
       supporter_name: supporterName,
-      status: 'pending'
+      status: 'completed',
+      payment_id: data.data.id // Store the ZBD payment ID
     });
 
     return NextResponse.json(data);

@@ -85,79 +85,93 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Stats Section */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mt-20">
-            <StatCard icon={<Zap />} number="10k+" label="Active Creators" />
-            <StatCard icon={<Globe />} number="$1M+" label="Tips Processed" />
-            <StatCard icon={<Shield />} number="100k+" label="Happy Supporters" />
+          {/* Video Section - Made Wider */}
+          <div className="mt-20 relative -mx-4 sm:-mx-8 md:-mx-16 lg:-mx-32">
+            <div className="aspect-video w-full rounded-2xl overflow-hidden border shadow-2xl bg-background/50 backdrop-blur-sm hover:shadow-3xl transition-all duration-300">
+              <video 
+                className="w-full h-full object-cover rounded-2xl"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="/demo.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+              {/* Optional Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent rounded-2xl" />
+            </div>
+            {/* Optional Decorative Elements */}
+            <div className="absolute -top-8 -left-8 w-48 h-48 bg-orange-500/20 rounded-full blur-3xl animate-float" />
+            <div className="absolute -bottom-8 -right-8 w-48 h-48 bg-pink-500/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '-5s' }} />
           </div>
-        </div>
 
-        {/* Features Section */}
-        <div className="mt-32 grid grid-cols-1 gap-8 sm:grid-cols-3">
-          <FeatureCard 
-            title="Lightning-Fast Payments"
-            description="Receive Bitcoin tips instantly with zero fees using the Lightning Network"
-            icon={<Zap className="w-6 h-6 text-orange-500" />}
-          />
-          <FeatureCard 
-            title="Support Causes"
-            description="Contribute to verified causes and make a real impact with your Bitcoin"
-            icon={<Heart className="w-6 h-6 text-orange-500" />}
-          />
-          <FeatureCard 
-            title="Fund Projects"
-            description="Support innovative projects and startups through crowdfunding"
-            icon={<Rocket className="w-6 h-6 text-orange-500" />}
-          />
-        </div>
-
-        {/* How It Works Section */}
-        <div id="how-it-works" className="mt-32 text-center scroll-mt-20">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border bg-background/50 backdrop-blur-sm mb-8">
-            <ArrowRight className="w-4 h-4 text-orange-500" />
-            <span className="text-sm">Simple Process</span>
-          </div>
-          <h2 className="text-3xl font-bold mb-12">How It Works</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <StepCard 
-              step="1"
-              title="Choose Your Path"
-              description="Create a tipping page or browse verified causes to support"
+          {/* Features Section */}
+          <div className="mt-32 grid grid-cols-1 gap-8 sm:grid-cols-3">
+            <FeatureCard 
+              title="Lightning-Fast Payments"
+              description="Receive Bitcoin tips instantly with zero fees using the Lightning Network"
+              icon={<Zap className="w-6 h-6 text-orange-500" />}
             />
-            <StepCard 
-              step="2"
-              title="Make an Impact"
-              description="Send Bitcoin tips instantly using Lightning Network"
+            <FeatureCard 
+              title="Support Causes"
+              description="Contribute to verified causes and make a real impact with your Bitcoin"
+              icon={<Heart className="w-6 h-6 text-orange-500" />}
             />
-            <StepCard 
-              step="3"
-              title="Track Progress"
-              description="See your contributions and the impact they make"
+            <FeatureCard 
+              title="Fund Projects"
+              description="Support innovative projects and startups through crowdfunding"
+              icon={<Rocket className="w-6 h-6 text-orange-500" />}
             />
           </div>
-        </div>
 
-        {/* CTA Section */}
-        <div className="mt-32 text-center">
-          <div className="max-w-3xl mx-auto p-8 rounded-2xl bg-gradient-to-r from-orange-500/10 to-pink-500/10 border backdrop-blur-sm">
-            <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
-            <p className="text-muted-foreground mb-8">
-              Create your page, support causes, or fund innovative projects with Bitcoin
-            </p>
-            <div className="flex gap-4 justify-center flex-col sm:flex-row">
-              <Link href="/create-page">
-                <Button size="lg" className="text-lg px-8 py-6 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group">
-                  Create Your Page
-                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-              <Link href="/crowdfunding">
-                <Button size="lg" variant="outline" className="text-lg px-8 py-6 rounded-full hover:bg-background/50 backdrop-blur-sm">
-                  <Rocket className="w-5 h-5 mr-2" />
-                  Browse Projects
-                </Button>
-              </Link>
+          {/* How It Works Section */}
+          <div id="how-it-works" className="mt-32 text-center scroll-mt-20">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border bg-background/50 backdrop-blur-sm mb-8">
+              <ArrowRight className="w-4 h-4 text-orange-500" />
+              <span className="text-sm">Simple Process</span>
+            </div>
+            <h2 className="text-3xl font-bold mb-12">How It Works</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <StepCard 
+                step="1"
+                title="Choose Your Path"
+                description="Create a tipping page or browse verified causes to support"
+              />
+              <StepCard 
+                step="2"
+                title="Make an Impact"
+                description="Send Bitcoin tips instantly using Lightning Network"
+              />
+              <StepCard 
+                step="3"
+                title="Track Progress"
+                description="See your contributions and the impact they make"
+              />
+            </div>
+          </div>
+
+          {/* CTA Section */}
+          <div className="mt-32 text-center">
+            <div className="max-w-3xl mx-auto p-8 rounded-2xl bg-gradient-to-r from-orange-500/10 to-pink-500/10 border backdrop-blur-sm">
+              <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
+              <p className="text-muted-foreground mb-8">
+                Create your page, support causes, or fund innovative projects with Bitcoin
+              </p>
+              <div className="flex gap-4 justify-center flex-col sm:flex-row">
+                <Link href="/create-page">
+                  <Button size="lg" className="text-lg px-8 py-6 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group">
+                    Create Your Page
+                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+                <Link href="/crowdfunding">
+                  <Button size="lg" variant="outline" className="text-lg px-8 py-6 rounded-full hover:bg-background/50 backdrop-blur-sm">
+                    <Rocket className="w-5 h-5 mr-2" />
+                    Browse Projects
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </div>

@@ -1,26 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-import { headers } from 'next/headers';
-import crypto from 'crypto';
 
 export async function POST(request: Request) {
   try {
-    // Verify webhook signature
-    const signature = headers().get('x-zbd-signature');
-    const body = await request.text();
-    const expectedSignature = crypto
-      .createHmac('sha256', process.env.ZBD_WEBHOOK_SECRET!)
-      .update(body)
-      .digest('hex');
+    const payload = await request.json();
+    console.log('ZBD Webhook payload:', payload);
 
-    if (signature !== expectedSignature) {
-      return NextResponse.json(
-        { error: 'Invalid signature' },
-        { status: 401 }
-      );
+    // Only process completed payments
+    if (payload.status !== 'completed') {
+      return NextResponse.json({ success: true });
     }
-
-    const event = JSON.parse(body);
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -28,16 +17,37 @@ export async function POST(request: Request) {
       { auth: { persistSession: false } }
     );
 
-    // Update transaction status
-    await supabase
-      .from('transactions')
+    // Update tip status in database
+    const { data: tip, error: updateError } = await supabase
+      .from('tips')
       .update({
-        status: event.status,
-        completed_at: event.status === 'completed' ? new Date().toISOString() : null
+        status: 'completed',
+        completed_at: new Date().toISOString()
       })
-      .eq('internal_id', event.internalId);
+      .eq('payment_id', payload.data.id)
+      .select('*')
+      .single();
 
-    return NextResponse.json({ received: true });
+    if (updateError) {
+      console.error('Error updating tip:', updateError);
+      throw updateError;
+    }
+
+    console.log('Updated tip:', tip);
+
+    if (tip) {
+      // Update page stats using the increment_page_stats function
+      const { error: statsError } = await supabase.rpc('increment_page_stats', {
+        page_id: tip.page_id,
+        tip_amount: tip.amount
+      });
+
+      if (statsError) {
+        console.error('Error updating stats:', statsError);
+      }
+    }
+
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Webhook error:', error);
     return NextResponse.json(
